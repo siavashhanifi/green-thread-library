@@ -26,8 +26,7 @@ green_t* dequeue(green_t** queue_head) {
         fprintf(stderr, "dequeue(): Attempt to remove head from empty list, returning NULL\n");
         return NULL;
     }
-    green_t* old_head;
-    old_head = *queue_head;
+    green_t* old_head = *queue_head;
     //if has next
     if (old_head->next != NULL)
         //set susp_list to point to susp_list->next
@@ -38,8 +37,7 @@ green_t* dequeue(green_t** queue_head) {
     return old_head;
 }
 
-void insrt_head(green_t** susp_list, green_t* head)
-{
+void insrt_head(green_t** susp_list, green_t* head) {
     assert(head != NULL && susp_list != NULL);
 
     if ((green_t*)*susp_list != NULL) {
@@ -65,8 +63,7 @@ void* funC(void* arg) {
     return NULL;
 }
 
-void test_susplist()
-{
+void test_susplist() {
     green_t* a, * b, * c;
     a = malloc(sizeof(green_t));
     b = malloc(sizeof(green_t));
@@ -94,9 +91,3 @@ void test_susplist()
     free(b);
     free(c);
 }
-
-/*int main(){
-   test_susplist();
-   return 0;
-}*/
-/************Queue Utility end*************/

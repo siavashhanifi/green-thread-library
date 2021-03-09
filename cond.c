@@ -7,31 +7,14 @@ void green_cond_init(green_cond_t* green_cond) {
     sigprocmask(SIG_UNBLOCK, &block, NULL);
 }
 
-void green_cond_wait_old(green_cond_t* green_cond)
-{
-    assert(green_cond != NULL);
-    sigprocmask(SIG_BLOCK, &block, NULL);
-
-    green_t* this = running;
-
-    //add to susplist
-    enqueue(&(green_cond->susp_list), this);
-
-    //run next
-
-    green_t* next = rqueue_deq();
-    running = next;
-    swapcontext(this->context, next->context);
-
-    sigprocmask(SIG_UNBLOCK, &block, NULL);
-}
-
 void green_cond_signal(green_cond_t* green_cond) {
     assert(green_cond != NULL);
     sigprocmask(SIG_BLOCK, &block, NULL);
 
-    if (green_cond->susp_list != NULL)
-        rqueue_enq(dequeue(&(green_cond->susp_list)));
+    if (green_cond->susp_list != NULL) {
+        green_t *next = dequeue(&(green_cond->susp_list));
+        enqueue(&rqueue_head, next);
+    }
 
     sigprocmask(SIG_UNBLOCK, &block, NULL);
 }
@@ -47,7 +30,7 @@ void green_cond_broadcast(green_cond_t* green_cond)
     while (itr != NULL) {
         itr = itr->next;
         to_wake = dequeue(&(green_cond->susp_list));
-        rqueue_enq(to_wake);
+        enqueue(&rqueue_head, to_wake);
     }
 
     sigprocmask(SIG_UNBLOCK, &block, NULL);
@@ -68,31 +51,17 @@ int green_cond_wait(green_cond_t* green_cond, green_mutex_t* green_mutex) {
         //move suspended thread to ready queue
         if (green_mutex->susp_list != NULL) {
             green_t* ready = dequeue(&green_mutex->susp_list);
-            rqueue_enq(ready);
+            enqueue(&rqueue_head, ready);
         }
 
     }
 
     //schedule the next thread
-    green_t* next = rqueue_deq();
-    running = next;
-    swapcontext(susp->context, next->context);
+    cntx_swap_with_next(susp);
 
     if (green_mutex != NULL) {
         //try to take the lock
         green_mutex_lock(green_mutex);
-        /*if(green_mutex->taken){
-            //bad luck, suspend
-            susp = running;
-            enqueue(&green_mutex->susp_list, susp);
-
-            next = rqueue_deq();
-            running = next;
-            swapcontext(susp->context, next->context);
-        } else {
-            //take the lock
-            green_mutex->taken = TRUE;
-        }*/
     }
 
     //unblock

@@ -1,8 +1,15 @@
+#ifndef GLOBALS_H
+#define GLOBALS_H
+#include <ucontext.h>
+#include <signal.h>
 #include "green.h"
 
-ucontext_t main_cntx = { 0 };
-green_t main_green = { &main_cntx, NULL, NULL, NULL, NULL, NULL, FALSE }; //CUSTM ALTERED
-green_t* running = &main_green;
-green_t* rqueue_head = NULL; //CUSTM
-sigset_t block;
+typedef struct green_t green_t;
 
+extern ucontext_t main_cntx;
+extern green_t main_green;
+extern green_t* running;
+extern green_t* rqueue_head;
+extern sigset_t block;
+
+#endif // !GLOBALS_H

@@ -1,6 +1,12 @@
 #ifndef GREEN_H
 #define GREEN_H
 
+#define FALSE 0
+#define TRUE 1
+
+#define PERIOD 100
+#define STACK_SIZE 4096
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <ucontext.h>
@@ -8,6 +14,9 @@
 #include <sys/time.h>
 #include <signal.h>
 #include <unistd.h>
+#include "globals.h"
+#include "utility.h"
+#include "queue_utility.h"
 #include "mutex.h"
 #include "cond.h"
 
@@ -26,4 +35,3 @@ int green_yield();
 int green_join(green_t* thread, void** val);
 
 #endif // !GREEN
-

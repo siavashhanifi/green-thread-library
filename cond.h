@@ -1,6 +1,12 @@
 #ifndef COND_H
 #define COND_H
+#include "green.h"
 #include "globals.h"
+#include "utility.h"
+#include "mutex.h"
+
+typedef struct green_t green_t;
+typedef struct green_mutex_t green_mutex_t;
 
 typedef struct green_cond_t {
     green_t* susp_list;

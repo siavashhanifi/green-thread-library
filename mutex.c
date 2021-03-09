@@ -17,9 +17,7 @@ int green_mutex_lock(green_mutex_t* mutex) {
         //suspend the running thread
         enqueue(&mutex->susp_list, susp);
         //find the next thread
-        green_t* next = rqueue_deq();
-        running = next;
-        swapcontext(susp->context, next->context);
+        cntx_swap_with_next(susp);
     }
     else
         mutex->taken = TRUE;
@@ -30,15 +28,14 @@ int green_mutex_lock(green_mutex_t* mutex) {
 
 int green_mutex_unlock(green_mutex_t* mutex) {
     sigprocmask(SIG_BLOCK, &block, NULL);
-    if (mutex->susp_list != NULL)
-    {
+    if (mutex->susp_list != NULL) {
         // move suspended thread to ready queue
-        rqueue_enq(dequeue(&mutex->susp_list));
+        green_t* susp = dequeue(&mutex->susp_list);
+        enqueue(&rqueue_head, susp);
     }
     else
-    {
         mutex->taken = FALSE;
-    }
+
     sigprocmask(SIG_UNBLOCK, &block, NULL);
     return 0;
 }
