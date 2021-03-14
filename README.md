@@ -1,5 +1,5 @@
 <h1>gthreads</h1>
-<p> A (green) thread library running in user-space (non-kernel mode) using signal interrupts to swap between contexts. Uses POSIX's <code>ucontext</code> library to swap between contexts.</p>
+<p> A (green) thread library running in user-space (non-kernel mode). Uses POSIX's <code>ucontext</code> library to swap between contexts.</p>
 <h2>Build & Use</h2>
 <p>Instructions for building and using the library.</p>
 <h3>Requirements</h3>
